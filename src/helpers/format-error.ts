@@ -18,7 +18,10 @@ export function formatError(error: unknown): string {
       case 429:
         return "Too many requests to Xero. Please try again in a moment.";
       default:
-        return detail || "An error occurred while communicating with Xero.";
+        return (
+          detail ||
+          `Xero API error (${status}): ${JSON.stringify(error.response?.data) || error.message}`
+        );
     }
   }
   return error instanceof Error

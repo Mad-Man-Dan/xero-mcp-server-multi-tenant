@@ -15,8 +15,9 @@ const ListReportBalanceSheetTool = CreateXeroTool(
     standardLayout: z.boolean().optional().describe("Optional flag to use standard layout"),
     paymentsOnly: z.boolean().optional().describe("Optional flag to include only accounts with payments"),
   },
-  async (args: ListReportBalanceSheetParams) => {
-    const response = await listXeroReportBalanceSheet(args);
+  async (args: ListReportBalanceSheetParams & { tenantId?: string }) => {
+    const { tenantId, ...balanceSheetParams } = args;
+    const response = await listXeroReportBalanceSheet(balanceSheetParams, tenantId);
 
     // Check if the response contains an error
     if (response.error !== null) {

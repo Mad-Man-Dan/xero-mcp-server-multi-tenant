@@ -7,15 +7,16 @@ import { EmployeeLeaveType } from "xero-node/dist/gen/model/payroll-nz/employeeL
 /**
  * Internal function to fetch employee leave types from Xero
  */
-async function fetchEmployeeLeaveTypes(employeeId: string): Promise<EmployeeLeaveType[] | null> {
+async function fetchEmployeeLeaveTypes(employeeId: string, tenantId?: string): Promise<EmployeeLeaveType[] | null> {
   await xeroClient.authenticate();
+  const resolvedTenantId = xeroClient.resolveTenantId(tenantId);
 
   if (!employeeId) {
     throw new Error("Employee ID is required to fetch employee leave types");
   }
 
   const response = await xeroClient.payrollNZApi.getEmployeeLeaveTypes(
-    xeroClient.tenantId,
+    resolvedTenantId,
     employeeId,
     getClientHeaders(),
   );
@@ -29,9 +30,10 @@ async function fetchEmployeeLeaveTypes(employeeId: string): Promise<EmployeeLeav
  */
 export async function listXeroPayrollEmployeeLeaveTypes(
   employeeId: string,
+  tenantId?: string,
 ): Promise<XeroClientResponse<EmployeeLeaveType[]>> {
   try {
-    const leaveTypes = await fetchEmployeeLeaveTypes(employeeId);
+    const leaveTypes = await fetchEmployeeLeaveTypes(employeeId, tenantId);
 
     if (!leaveTypes) {
       return {

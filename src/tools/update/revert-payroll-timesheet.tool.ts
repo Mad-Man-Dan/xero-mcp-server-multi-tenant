@@ -11,9 +11,9 @@ const RevertPayrollTimesheetTool = CreateXeroTool(
   {
     timesheetID: z.string().describe("The ID of the timesheet to revert."),
   },
-  async (params: { timesheetID: string }) => {
-    const { timesheetID } = params;
-    const response = await revertXeroPayrollTimesheet(timesheetID);
+  async (params: { timesheetID: string; tenantId?: string }) => {
+    const { timesheetID, tenantId } = params;
+    const response = await revertXeroPayrollTimesheet(timesheetID, tenantId);
 
     if (response.isError) {
       return {

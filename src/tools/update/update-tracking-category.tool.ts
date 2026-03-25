@@ -10,8 +10,8 @@ const UpdateTrackingCategoryTool = CreateXeroTool(
     name: z.string().optional(),
     status: z.enum(["ACTIVE", "ARCHIVED"]).optional()
   },
-  async ({ trackingCategoryId, name, status }) => {
-    const response = await updateXeroTrackingCategory(trackingCategoryId, name, status);
+  async ({ trackingCategoryId, name, status, tenantId }) => {
+    const response = await updateXeroTrackingCategory(trackingCategoryId, name, status, tenantId);
 
     if (response.isError) {
       return {

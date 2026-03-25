@@ -8,8 +8,8 @@ const CreateTrackingCategoryTool = CreateXeroTool(
   {
     name: z.string()
   },
-  async ({ name }) => {
-    const response = await createXeroTrackingCategory(name);
+  async ({ name, tenantId }) => {
+    const response = await createXeroTrackingCategory(name, tenantId);
 
     if (response.isError) {
       return {

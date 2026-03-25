@@ -36,6 +36,7 @@ const CreateItemTool = CreateXeroTool(
     salesDetails,
     isTrackedAsInventory,
     inventoryAssetAccountCode,
+    tenantId,
   }) => {
     const result = await createXeroItem({
       code,
@@ -46,7 +47,7 @@ const CreateItemTool = CreateXeroTool(
       salesDetails,
       isTrackedAsInventory,
       inventoryAssetAccountCode,
-    });
+    }, tenantId);
 
     if (result.isError) {
       return {

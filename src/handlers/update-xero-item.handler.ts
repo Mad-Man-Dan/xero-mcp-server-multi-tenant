@@ -25,9 +25,11 @@ interface ItemDetails {
 
 async function updateItem(
   itemId: string,
-  itemDetails: ItemDetails
+  itemDetails: ItemDetails,
+  tenantId?: string
 ): Promise<Item | null> {
   await xeroClient.authenticate();
+  const resolvedTenantId = xeroClient.resolveTenantId(tenantId);
 
   const item: Partial<Item> = {
     code: itemDetails.code,
@@ -45,7 +47,7 @@ async function updateItem(
   };
 
   const response = await xeroClient.accountingApi.updateItem(
-    xeroClient.tenantId,
+    resolvedTenantId,
     itemId,
     items,
     undefined, // unitdp
@@ -64,10 +66,11 @@ async function updateItem(
  */
 export async function updateXeroItem(
   itemId: string,
-  itemDetails: ItemDetails
+  itemDetails: ItemDetails,
+  tenantId?: string
 ): Promise<XeroClientResponse<Item | null>> {
   try {
-    const item = await updateItem(itemId, itemDetails);
+    const item = await updateItem(itemId, itemDetails, tenantId);
 
     return {
       result: item,

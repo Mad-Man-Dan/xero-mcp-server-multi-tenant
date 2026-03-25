@@ -21,6 +21,7 @@ const ListProfitAndLossTool = CreateXeroTool(
       args?.timeframe,
       args?.standardLayout,
       args?.paymentsOnly,
+      args?.tenantId,
     );
 
     if (response.error !== null) {

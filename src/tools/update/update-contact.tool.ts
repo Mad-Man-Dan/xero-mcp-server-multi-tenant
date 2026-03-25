@@ -36,6 +36,7 @@ const UpdateContactTool = CreateXeroTool(
     email,
     phone,
     address,
+    tenantId,
   }: {
     contactId: string;
     name: string;
@@ -51,6 +52,7 @@ const UpdateContactTool = CreateXeroTool(
     };
     firstName?: string;
     lastName?: string;
+    tenantId?: string;
   }) => {
     try {
       const response = await updateXeroContact(
@@ -61,6 +63,7 @@ const UpdateContactTool = CreateXeroTool(
         email,
         phone,
         address,
+        tenantId,
       );
       if (response.isError) {
         return {

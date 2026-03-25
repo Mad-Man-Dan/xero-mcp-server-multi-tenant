@@ -22,8 +22,8 @@ const CreateCreditNoteTool = CreateXeroTool(
     lineItems: z.array(lineItemSchema),
     reference: z.string().optional(),
   },
-  async ({ contactId, lineItems, reference }) => {
-    const result = await createXeroCreditNote(contactId, lineItems, reference);
+  async ({ contactId, lineItems, reference, tenantId }) => {
+    const result = await createXeroCreditNote(contactId, lineItems, reference, tenantId);
     if (result.isError) {
       return {
         content: [

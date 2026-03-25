@@ -20,9 +20,11 @@ async function createBankTransaction(
   contactId: string,
   lineItems: BankTransactionLineItem[],
   reference?: string,
-  date?: string
+  date?: string,
+  tenantId?: string
 ): Promise<BankTransaction | undefined> {
   await xeroClient.authenticate();
+  const resolvedTenantId = xeroClient.resolveTenantId(tenantId);
 
   const bankTransaction: BankTransaction = {
     type: BankTransaction.TypeEnum[type],
@@ -39,7 +41,7 @@ async function createBankTransaction(
   };
 
   const response = await xeroClient.accountingApi.createBankTransactions(
-    xeroClient.tenantId, // xeroTenantId
+    resolvedTenantId, // xeroTenantId
     {
       bankTransactions: [bankTransaction]
     }, // bankTransactions
@@ -60,10 +62,11 @@ export async function createXeroBankTransaction(
   contactId: string,
   lineItems: BankTransactionLineItem[],
   reference?: string,
-  date?: string
+  date?: string,
+  tenantId?: string
 ): Promise<XeroClientResponse<BankTransaction>> {
   try {
-    const createdTransaction = await createBankTransaction(type, bankAccountId, contactId, lineItems, reference, date);
+    const createdTransaction = await createBankTransaction(type, bankAccountId, contactId, lineItems, reference, date, tenantId);
   
     if (!createdTransaction) {
       throw new Error("Bank transaction creation failed.");

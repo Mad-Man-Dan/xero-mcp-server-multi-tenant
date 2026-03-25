@@ -12,15 +12,16 @@ interface FetchEmployeeLeaveParams {
 /**
  * Internal function to fetch employee leave from Xero
  */
-async function fetchEmployeeLeave({ employeeId }: FetchEmployeeLeaveParams): Promise<EmployeeLeave[] | null> {
+async function fetchEmployeeLeave({ employeeId }: FetchEmployeeLeaveParams, tenantId?: string): Promise<EmployeeLeave[] | null> {
   await xeroClient.authenticate();
+  const resolvedTenantId = xeroClient.resolveTenantId(tenantId);
 
   if (!employeeId) {
     throw new Error("Employee ID is required to fetch employee leave");
   }
 
   const response = await xeroClient.payrollNZApi.getEmployeeLeaves(
-    xeroClient.tenantId,
+    resolvedTenantId,
     employeeId,
     {
       headers: getClientHeaders().headers
@@ -36,9 +37,10 @@ async function fetchEmployeeLeave({ employeeId }: FetchEmployeeLeaveParams): Pro
  */
 export async function listXeroPayrollEmployeeLeave(
   employeeId: string,
+  tenantId?: string,
 ): Promise<XeroClientResponse<EmployeeLeave[]>> {
   try {
-    const leave = await fetchEmployeeLeave({ employeeId });
+    const leave = await fetchEmployeeLeave({ employeeId }, tenantId);
 
     if (!leave) {
       return {

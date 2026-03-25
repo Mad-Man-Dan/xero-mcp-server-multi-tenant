@@ -6,11 +6,13 @@ import { getClientHeaders } from "../helpers/get-client-headers.js";
 
 async function getItems(
   page: number,
+  tenantId?: string,
 ): Promise<Item[]> {
   await xeroClient.authenticate();
+  const resolvedTenantId = xeroClient.resolveTenantId(tenantId);
 
   const items = await xeroClient.accountingApi.getItems(
-    xeroClient.tenantId,
+    resolvedTenantId,
     undefined, // ifModifiedSince
     undefined, // where
     undefined, // order
@@ -25,9 +27,10 @@ async function getItems(
  */
 export async function listXeroItems(
   page: number = 1,
+  tenantId?: string,
 ): Promise<XeroClientResponse<Item[]>> {
   try {
-    const items = await getItems(page);
+    const items = await getItems(page, tenantId);
 
     return {
       result: items,

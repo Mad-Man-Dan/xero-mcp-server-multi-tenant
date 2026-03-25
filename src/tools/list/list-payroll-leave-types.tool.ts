@@ -6,8 +6,8 @@ const ListPayrollLeaveTypesTool = CreateXeroTool(
   "list-payroll-leave-types",
   "Lists all available leave types in Xero Payroll. This provides information about all the leave categories configured in your Xero system, including statutory and organization-specific leave types.",
   {},
-  async () => {
-    const response = await listXeroPayrollLeaveTypes();
+  async ({ tenantId }) => {
+    const response = await listXeroPayrollLeaveTypes(tenantId);
     if (response.isError) {
       return {
         content: [

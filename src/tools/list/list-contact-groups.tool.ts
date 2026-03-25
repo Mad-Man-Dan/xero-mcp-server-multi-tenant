@@ -13,7 +13,7 @@ const ListContactGroupsTool = CreateXeroTool(
       .describe("Optional ID of the contact group to retrieve"),    
   },
   async (args) => {
-    const response = await listXeroContactGroups(args?.contactGroupId);
+    const response = await listXeroContactGroups(args?.contactGroupId, args?.tenantId);
     
     if (response.error !== null) {
       return {

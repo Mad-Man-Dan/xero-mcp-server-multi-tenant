@@ -26,8 +26,9 @@ This allows you to specify details such as the employee ID, payroll calendar ID,
       .optional()
       .describe("The lines of the timesheet."),
   },
-  async (params: Timesheet) => {
-    const response = await createXeroPayrollTimesheet(params);
+  async (params: Timesheet & { tenantId?: string }) => {
+    const { tenantId, ...timesheetParams } = params;
+    const response = await createXeroPayrollTimesheet(timesheetParams as Timesheet, tenantId);
 
     if (response.isError) {
       return {

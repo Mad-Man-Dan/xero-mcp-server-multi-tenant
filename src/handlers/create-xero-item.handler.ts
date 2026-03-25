@@ -24,9 +24,11 @@ interface ItemDetails {
 }
 
 async function createItem(
-  itemDetails: ItemDetails
+  itemDetails: ItemDetails,
+  tenantId?: string
 ): Promise<Item | null> {
   await xeroClient.authenticate();
+  const resolvedTenantId = xeroClient.resolveTenantId(tenantId);
 
   const item: Item = {
     code: itemDetails.code,
@@ -58,7 +60,7 @@ async function createItem(
   };
 
   const response = await xeroClient.accountingApi.createItems(
-    xeroClient.tenantId,
+    resolvedTenantId,
     items, // items
     true, // summarizeErrors
     undefined, // unitdp
@@ -73,10 +75,11 @@ async function createItem(
  * Create an item in Xero
  */
 export async function createXeroItem(
-  itemDetails: ItemDetails
+  itemDetails: ItemDetails,
+  tenantId?: string
 ): Promise<XeroClientResponse<Item | null>> {
   try {
-    const item = await createItem(itemDetails);
+    const item = await createItem(itemDetails, tenantId);
 
     return {
       result: item,

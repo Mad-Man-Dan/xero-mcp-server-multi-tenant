@@ -5,8 +5,8 @@ const ListTaxRatesTool = CreateXeroTool(
   "list-tax-rates",
   "Lists all tax rates in Xero. Use this tool to get the tax rates to be used when creating invoices in Xero",
   {},
-  async () => {
-    const response = await listXeroTaxRates();
+  async ({ tenantId }) => {
+    const response = await listXeroTaxRates(tenantId);
     if (response.error !== null) {
       return {
         content: [

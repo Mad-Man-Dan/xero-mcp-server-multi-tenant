@@ -16,8 +16,8 @@ const ListBankTransactionsTool = CreateXeroTool(
     page: z.number(),
     bankAccountId: z.string().optional()
   },
-  async ({ bankAccountId, page }) => {
-    const response = await listXeroBankTransactions(page, bankAccountId);
+  async ({ bankAccountId, page, tenantId }) => {
+    const response = await listXeroBankTransactions(page, bankAccountId, tenantId);
     if (response.isError) {
       return {
         content: [

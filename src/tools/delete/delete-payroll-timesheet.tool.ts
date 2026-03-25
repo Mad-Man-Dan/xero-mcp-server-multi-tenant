@@ -11,9 +11,9 @@ const DeletePayrollTimesheetTool = CreateXeroTool(
   {
     timesheetID: z.string().describe("The ID of the timesheet to delete."),
   },
-  async (params: { timesheetID: string }) => {
-    const { timesheetID } = params;
-    const response = await deleteXeroPayrollTimesheet(timesheetID);
+  async (params: { timesheetID: string; tenantId?: string }) => {
+    const { timesheetID, tenantId } = params;
+    const response = await deleteXeroPayrollTimesheet(timesheetID, tenantId);
 
     if (response.isError) {
       return {

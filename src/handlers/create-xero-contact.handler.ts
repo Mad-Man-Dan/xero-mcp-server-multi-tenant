@@ -8,8 +8,10 @@ async function createContact(
   name: string,
   email?: string,
   phone?: string,
+  tenantId?: string,
 ): Promise<Contact | undefined> {
   await xeroClient.authenticate();
+  const resolvedTenantId = xeroClient.resolveTenantId(tenantId);
 
   const contact: Contact = {
     name,
@@ -25,7 +27,7 @@ async function createContact(
   };
 
   const response = await xeroClient.accountingApi.createContacts(
-    xeroClient.tenantId,
+    resolvedTenantId,
     {
       contacts: [contact],
     }, //contacts
@@ -44,9 +46,10 @@ export async function createXeroContact(
   name: string,
   email?: string,
   phone?: string,
+  tenantId?: string,
 ): Promise<XeroClientResponse<Contact>> {
   try {
-    const createdContact = await createContact(name, email, phone);
+    const createdContact = await createContact(name, email, phone, tenantId);
 
     if (!createdContact) {
       throw new Error("Contact creation failed.");

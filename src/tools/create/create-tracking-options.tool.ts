@@ -10,8 +10,8 @@ const CreateTrackingOptionsTool = CreateXeroTool(
     trackingCategoryId: z.string(),
     optionNames: z.array(z.string()).max(10)
   },
-  async ({ trackingCategoryId, optionNames }) => {
-    const response = await createXeroTrackingOptions(trackingCategoryId, optionNames);
+  async ({ trackingCategoryId, optionNames, tenantId }) => {
+    const response = await createXeroTrackingOptions(trackingCategoryId, optionNames, tenantId);
 
     if (response.isError) {
       return {

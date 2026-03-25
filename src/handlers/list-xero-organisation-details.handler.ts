@@ -4,11 +4,12 @@ import { formatError } from "../helpers/format-error.js";
 import { Organisation } from "xero-node";
 import { getClientHeaders } from "../helpers/get-client-headers.js";
 
-async function getOrganisationDetails(): Promise<Organisation> {
+async function getOrganisationDetails(tenantId?: string): Promise<Organisation> {
   await xeroClient.authenticate();
+  const resolvedTenantId = xeroClient.resolveTenantId(tenantId);
 
   const response = await xeroClient.accountingApi.getOrganisations(
-    xeroClient.tenantId,
+    resolvedTenantId,
     getClientHeaders(),
   );
 
@@ -24,11 +25,11 @@ async function getOrganisationDetails(): Promise<Organisation> {
 /**
  * List organisation details from Xero
  */
-export async function listXeroOrganisationDetails(): Promise<
+export async function listXeroOrganisationDetails(tenantId?: string): Promise<
   XeroClientResponse<Organisation>
 > {
   try {
-    const organisation = await getOrganisationDetails();
+    const organisation = await getOrganisationDetails(tenantId);
 
     return {
       result: organisation,

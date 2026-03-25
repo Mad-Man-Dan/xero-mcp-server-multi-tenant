@@ -12,9 +12,9 @@ This provides details such as the timesheet ID, employee ID, start and end dates
   {
     timesheetID: z.string().describe("The ID of the timesheet to retrieve."),
   },
-  async (params: { timesheetID: string }) => {
-    const { timesheetID } = params;
-    const response = await getXeroPayrollTimesheet(timesheetID);
+  async (params: { timesheetID: string; tenantId?: string }) => {
+    const { timesheetID, tenantId } = params;
+    const response = await getXeroPayrollTimesheet(timesheetID, tenantId);
 
     if (response.isError) {
       return {

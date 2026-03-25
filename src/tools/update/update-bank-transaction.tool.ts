@@ -35,10 +35,11 @@ const UpdateBankTransactionTool = CreateXeroTool(
       contactId,
       lineItems,
       reference,
-      date
+      date,
+      tenantId
     }
   ) => {
-    const result = await updateXeroBankTransaction(bankTransactionId, type, contactId, lineItems, reference, date);
+    const result = await updateXeroBankTransaction(bankTransactionId, type, contactId, lineItems, reference, date, tenantId);
 
     if (result.isError) {
       return {

@@ -30,6 +30,7 @@ If they want the next page, call this tool again with the next page number, modi
       args?.page,
       args?.manualJournalId,
       args?.modifiedAfter,
+      args?.tenantId,
     );
 
     if (response.isError) {

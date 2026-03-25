@@ -19,9 +19,9 @@ const AddTimesheetLineTool = CreateXeroTool(
       date: z.string().describe("The date for the timesheet line (YYYY-MM-DD)."),
     }).describe("The details of the timesheet line to add."),
   },
-  async (params: { timesheetID: string; timesheetLine: TimesheetLine }) => {
-    const { timesheetID, timesheetLine } = params;
-    const response = await updateXeroPayrollTimesheetAddLine(timesheetID, timesheetLine);
+  async (params: { timesheetID: string; timesheetLine: TimesheetLine; tenantId?: string }) => {
+    const { timesheetID, timesheetLine, tenantId } = params;
+    const response = await updateXeroPayrollTimesheetAddLine(timesheetID, timesheetLine, tenantId);
 
     if (response.isError) {
       return {

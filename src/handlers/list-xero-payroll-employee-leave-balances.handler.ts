@@ -7,15 +7,16 @@ import { EmployeeLeaveBalance } from "xero-node/dist/gen/model/payroll-nz/employ
 /**
  * Internal function to fetch employee leave balances from Xero
  */
-async function fetchEmployeeLeaveBalances(employeeId: string): Promise<EmployeeLeaveBalance[] | null> {
+async function fetchEmployeeLeaveBalances(employeeId: string, tenantId?: string): Promise<EmployeeLeaveBalance[] | null> {
   await xeroClient.authenticate();
+  const resolvedTenantId = xeroClient.resolveTenantId(tenantId);
 
   if (!employeeId) {
     throw new Error("Employee ID is required to fetch employee leave balances");
   }
 
   const response = await xeroClient.payrollNZApi.getEmployeeLeaveBalances(
-    xeroClient.tenantId,
+    resolvedTenantId,
     employeeId,
     getClientHeaders(),
   );
@@ -29,9 +30,10 @@ async function fetchEmployeeLeaveBalances(employeeId: string): Promise<EmployeeL
  */
 export async function listXeroPayrollEmployeeLeaveBalances(
   employeeId: string,
+  tenantId?: string,
 ): Promise<XeroClientResponse<EmployeeLeaveBalance[]>> {
   try {
-    const leaveBalances = await fetchEmployeeLeaveBalances(employeeId);
+    const leaveBalances = await fetchEmployeeLeaveBalances(employeeId, tenantId);
 
     if (!leaveBalances) {
       return {

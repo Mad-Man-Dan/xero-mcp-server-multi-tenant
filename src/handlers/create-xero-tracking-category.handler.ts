@@ -5,16 +5,18 @@ import { getClientHeaders } from "../helpers/get-client-headers.js";
 import { TrackingCategory } from "xero-node";
 
 async function createTrackingCategory(
-  name: string
+  name: string,
+  tenantId?: string
 ): Promise<TrackingCategory | undefined> {
   xeroClient.authenticate();
+  const resolvedTenantId = xeroClient.resolveTenantId(tenantId);
 
   const trackingCategory: TrackingCategory = {
     name: name
   };
 
   const response = await xeroClient.accountingApi.createTrackingCategory(
-    xeroClient.tenantId, // xeroTenantId
+    resolvedTenantId, // xeroTenantId
     trackingCategory,
     undefined, // idempotencyKey
     getClientHeaders() // options
@@ -26,10 +28,11 @@ async function createTrackingCategory(
 }
 
 export async function createXeroTrackingCategory(
-  name: string
+  name: string,
+  tenantId?: string
 ): Promise<XeroClientResponse<TrackingCategory>> {
   try {
-    const createdTrackingCategory = await createTrackingCategory(name);
+    const createdTrackingCategory = await createTrackingCategory(name, tenantId);
 
     if (!createdTrackingCategory) {
       throw new Error("Tracking Category creation failed.");

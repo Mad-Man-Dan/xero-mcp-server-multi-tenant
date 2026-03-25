@@ -142,3 +142,6 @@ dist
 
 # Cursor IDE
 .cursor/
+
+# Xero MCP token store (OAuth tokens persisted locally)
+.xero-mcp/

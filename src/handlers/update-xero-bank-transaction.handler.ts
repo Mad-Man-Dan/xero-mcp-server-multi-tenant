@@ -14,11 +14,12 @@ interface BankTransactionLineItem {
 
 type BankTransactionType = "RECEIVE" | "SPEND";
 
-async function getBankTransaction(bankTransactionId: string): Promise<BankTransaction | undefined> {
+async function getBankTransaction(bankTransactionId: string, tenantId?: string): Promise<BankTransaction | undefined> {
   await xeroClient.authenticate();
+  const resolvedTenantId = xeroClient.resolveTenantId(tenantId);
 
   const response = await xeroClient.accountingApi.getBankTransaction(
-    xeroClient.tenantId, // xeroTenantId
+    resolvedTenantId, // xeroTenantId
     bankTransactionId, // bankTransactionID
     undefined, // unitdp
     getClientHeaders() // options
@@ -34,8 +35,12 @@ async function updateBankTransaction(
   contactId?: string,
   lineItems?: BankTransactionLineItem[],
   reference?: string,
-  date?: string
+  date?: string,
+  tenantId?: string
 ): Promise<BankTransaction | undefined> {
+  await xeroClient.authenticate();
+  const resolvedTenantId = xeroClient.resolveTenantId(tenantId);
+
   const bankTransaction: BankTransaction = {
     ...existingBankTransaction,
     bankTransactionID: bankTransactionId,
@@ -47,7 +52,7 @@ async function updateBankTransaction(
   };
 
   const response = await xeroClient.accountingApi.updateBankTransaction(
-    xeroClient.tenantId, // xeroTenantId
+    resolvedTenantId, // xeroTenantId
     bankTransactionId, // bankTransactionID
     { bankTransactions: [bankTransaction] }, // bankTransactions
     undefined, // unitdp
@@ -64,10 +69,11 @@ export async function updateXeroBankTransaction(
   contactId?: string,
   lineItems?: BankTransactionLineItem[],
   reference?: string,
-  date?: string
+  date?: string,
+  tenantId?: string
 ): Promise<XeroClientResponse<BankTransaction>> {
   try {
-    const existingBankTransaction = await getBankTransaction(bankTransactionId);
+    const existingBankTransaction = await getBankTransaction(bankTransactionId, tenantId);
 
     if (!existingBankTransaction) {
       throw new Error(`Could not find bank transaction`);
@@ -80,7 +86,8 @@ export async function updateXeroBankTransaction(
       contactId,
       lineItems,
       reference,
-      date
+      date,
+      tenantId
     );
 
     if (!updatedBankTransaction) {

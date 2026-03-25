@@ -5,8 +5,8 @@ const ListAccountsTool = CreateXeroTool(
   "list-accounts",
   "Lists all accounts in Xero. Use this tool to get the account codes and names to be used when creating invoices in Xero",
   {},
-  async () => {
-    const response = await listXeroAccounts();
+  async ({ tenantId }) => {
+    const response = await listXeroAccounts(tenantId);
     if (response.error !== null) {
       return {
         content: [

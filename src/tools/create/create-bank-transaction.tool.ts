@@ -27,8 +27,8 @@ const CreateBankTransactionTool = CreateXeroTool(
       .optional()
       .describe("If no date is provided, the date will default to today's date")
   },
-  async ({ type, bankAccountId, contactId, lineItems, reference, date }) => {
-    const result = await createXeroBankTransaction(type, bankAccountId, contactId, lineItems, reference, date);
+  async ({ type, bankAccountId, contactId, lineItems, reference, date, tenantId }) => {
+    const result = await createXeroBankTransaction(type, bankAccountId, contactId, lineItems, reference, date, tenantId);
 
     if (result.isError) {
       return {

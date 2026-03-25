@@ -6,11 +6,12 @@ import { XeroClientResponse } from "../types/tool-response.js";
 
 type TrackingCategoryStatus = "ACTIVE" | "ARCHIVED";
 
-async function getTrackingCategory(trackingCategoryId: string): Promise<TrackingCategory | undefined> {
+async function getTrackingCategory(trackingCategoryId: string, tenantId?: string): Promise<TrackingCategory | undefined> {
   await xeroClient.authenticate();
+  const resolvedTenantId = xeroClient.resolveTenantId(tenantId);
 
   const response = await xeroClient.accountingApi.getTrackingCategory(
-    xeroClient.tenantId,
+    resolvedTenantId,
     trackingCategoryId,
     getClientHeaders()
   );
@@ -22,8 +23,12 @@ async function updateTrackingCategory(
   trackingCategoryId: string,
   existingTrackingCategory: TrackingCategory,
   name?: string,
-  status?: TrackingCategoryStatus
+  status?: TrackingCategoryStatus,
+  tenantId?: string
 ): Promise<TrackingCategory | undefined> {
+  await xeroClient.authenticate();
+  const resolvedTenantId = xeroClient.resolveTenantId(tenantId);
+
   const trackingCategory: TrackingCategory = {
     trackingCategoryID: trackingCategoryId,
     name: name ? name : existingTrackingCategory.name,
@@ -31,7 +36,7 @@ async function updateTrackingCategory(
   };
 
   await xeroClient.accountingApi.updateTrackingCategory(
-    xeroClient.tenantId,
+    resolvedTenantId,
     trackingCategoryId,
     trackingCategory,
     undefined, // idempotencyKey
@@ -44,10 +49,11 @@ async function updateTrackingCategory(
 export async function updateXeroTrackingCategory(
   trackingCategoryId: string,
   name?: string,
-  status?: TrackingCategoryStatus
+  status?: TrackingCategoryStatus,
+  tenantId?: string
 ): Promise<XeroClientResponse<TrackingCategory>> {
   try {
-    const existingTrackingCategory = await getTrackingCategory(trackingCategoryId);
+    const existingTrackingCategory = await getTrackingCategory(trackingCategoryId, tenantId);
 
     if (!existingTrackingCategory) {
       throw new Error("Could not find tracking category.");
@@ -57,7 +63,8 @@ export async function updateXeroTrackingCategory(
       trackingCategoryId,
       existingTrackingCategory,
       name,
-      status
+      status,
+      tenantId
     );
 
     if (!updatedTrackingCategory) {

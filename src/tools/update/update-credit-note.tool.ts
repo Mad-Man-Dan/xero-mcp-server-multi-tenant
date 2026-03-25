@@ -36,6 +36,7 @@ const UpdateCreditNoteTool = CreateXeroTool(
       reference,
       date,
       contactId,
+      tenantId,
     }: {
       creditNoteId: string;
       lineItems?: Array<{
@@ -48,6 +49,7 @@ const UpdateCreditNoteTool = CreateXeroTool(
       reference?: string;
       date?: string;
       contactId?: string;
+      tenantId?: string;
     },
   ) => {
     const result = await updateXeroCreditNote(
@@ -56,6 +58,7 @@ const UpdateCreditNoteTool = CreateXeroTool(
       reference,
       contactId,
       date,
+      tenantId,
     );
     if (result.isError) {
       return {

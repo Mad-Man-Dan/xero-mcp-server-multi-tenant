@@ -9,13 +9,15 @@ import { XeroClientResponse } from "../types/tool-response.js";
 async function updateTimesheetLine(
   timesheetID: string,
   timesheetLineID: string,
-  timesheetLine: TimesheetLine
+  timesheetLine: TimesheetLine,
+  tenantId?: string
 ): Promise<TimesheetLine | null> {
   await xeroClient.authenticate();
+  const resolvedTenantId = xeroClient.resolveTenantId(tenantId);
 
   // Call the updateTimesheetLine endpoint from the PayrollNZApi
   const updatedLine = await xeroClient.payrollNZApi.updateTimesheetLine(
-    xeroClient.tenantId,
+    resolvedTenantId,
     timesheetID,
     timesheetLineID,
     timesheetLine,
@@ -30,10 +32,11 @@ async function updateTimesheetLine(
 export async function updateXeroPayrollTimesheetUpdateLine(
   timesheetID: string,
   timesheetLineID: string,
-  timesheetLine: TimesheetLine
+  timesheetLine: TimesheetLine,
+  tenantId?: string
 ): Promise<XeroClientResponse<TimesheetLine | null>> {
   try {
-    const updatedLine = await updateTimesheetLine(timesheetID, timesheetLineID, timesheetLine);
+    const updatedLine = await updateTimesheetLine(timesheetID, timesheetLineID, timesheetLine, tenantId);
 
     return {
       result: updatedLine,

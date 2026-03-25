@@ -8,12 +8,14 @@ async function listAgedReceivablesByContact(
   contactId: string,
   reportDate?: string,
   invoicesFromDate?: string,
-  invoicesToDate?: string
+  invoicesToDate?: string,
+  tenantId?: string,
 ): Promise<ReportWithRow | undefined> {
   await xeroClient.authenticate();
+  const resolvedTenantId = xeroClient.resolveTenantId(tenantId);
 
   const response = await xeroClient.accountingApi.getReportAgedReceivablesByContact(
-    xeroClient.tenantId, // xeroTenantId
+    resolvedTenantId, // xeroTenantId
     contactId, // contactId
     reportDate, // date
     invoicesFromDate, // fromDate
@@ -28,10 +30,11 @@ export async function listXeroAgedReceivablesByContact(
   contactId: string,
   reportDate?: string,
   invoicesFromDate?: string,
-  invoicesToDate?: string
+  invoicesToDate?: string,
+  tenantId?: string,
 ): Promise<XeroClientResponse<ReportWithRow>> {
   try {
-    const agedReceivables = await listAgedReceivablesByContact(contactId, reportDate, invoicesFromDate, invoicesToDate);
+    const agedReceivables = await listAgedReceivablesByContact(contactId, reportDate, invoicesFromDate, invoicesToDate, tenantId);
 
     if (!agedReceivables) {
       return {

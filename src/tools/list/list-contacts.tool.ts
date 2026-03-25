@@ -12,8 +12,8 @@ const ListContactsTool = CreateXeroTool(
     searchTerm: z.string().optional().describe("Search parameter that performs a case-insensitive text search across the Name, FirstName, LastName, ContactNumber and EmailAddress fields"),
   },
   async (params) => {
-    const { page, searchTerm } = params;
-    const response = await listXeroContacts(page, searchTerm);
+    const { page, searchTerm, tenantId } = params;
+    const response = await listXeroContacts(page, searchTerm, tenantId);
 
     if (response.isError) {
       return {

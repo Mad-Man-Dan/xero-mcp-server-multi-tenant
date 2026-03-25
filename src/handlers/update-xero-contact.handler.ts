@@ -12,8 +12,10 @@ async function updateContact(
   phone: string | undefined,
   address: Address | undefined,
   contactId: string,
+  tenantId?: string,
 ): Promise<Contact | undefined> {
   await xeroClient.authenticate();
+  const resolvedTenantId = xeroClient.resolveTenantId(tenantId);
 
   const contact: Contact = {
     name,
@@ -48,7 +50,7 @@ async function updateContact(
   };
 
   const response = await xeroClient.accountingApi.updateContact(
-    xeroClient.tenantId,
+    resolvedTenantId,
     contactId, // contactId
     contacts, // contacts
     undefined, // idempotencyKey
@@ -70,6 +72,7 @@ export async function updateXeroContact(
   email?: string,
   phone?: string,
   address?: Address,
+  tenantId?: string,
 ): Promise<XeroClientResponse<Contact>> {
   try {
     const updatedContact = await updateContact(
@@ -80,6 +83,7 @@ export async function updateXeroContact(
       phone,
       address,
       contactId,
+      tenantId,
     );
 
     if (!updatedContact) {

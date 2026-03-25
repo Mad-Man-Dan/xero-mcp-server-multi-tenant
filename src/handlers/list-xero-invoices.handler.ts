@@ -8,11 +8,13 @@ async function getInvoices(
   invoiceNumbers: string[] | undefined,
   contactIds: string[] | undefined,
   page: number,
+  tenantId?: string,
 ): Promise<Invoice[]> {
   await xeroClient.authenticate();
+  const resolvedTenantId = xeroClient.resolveTenantId(tenantId);
 
   const invoices = await xeroClient.accountingApi.getInvoices(
-    xeroClient.tenantId,
+    resolvedTenantId,
     undefined, // ifModifiedSince
     undefined, // where
     "UpdatedDateUTC DESC", // order
@@ -39,9 +41,10 @@ export async function listXeroInvoices(
   page: number = 1,
   contactIds?: string[],
   invoiceNumbers?: string[],
+  tenantId?: string,
 ): Promise<XeroClientResponse<Invoice[]>> {
   try {
-    const invoices = await getInvoices(invoiceNumbers, contactIds, page);
+    const invoices = await getInvoices(invoiceNumbers, contactIds, page, tenantId);
 
     return {
       result: invoices,

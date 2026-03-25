@@ -15,9 +15,9 @@ const CreateContactTool = CreateXeroTool(
     email: z.string().email().optional(),
     phone: z.string().optional(),
   },
-  async ({ name, email, phone }) => {
+  async ({ name, email, phone, tenantId }) => {
     try {
-      const response = await createXeroContact(name, email, phone);
+      const response = await createXeroContact(name, email, phone, tenantId);
       if (response.isError) {
         return {
           content: [

@@ -73,6 +73,7 @@ const CreateManualJournalTool = CreateXeroTool(
         args.status as ManualJournal.StatusEnum | undefined,
         args.url,
         args.showOnCashBasisReports,
+        args.tenantId,
       );
 
       if (response.isError) {

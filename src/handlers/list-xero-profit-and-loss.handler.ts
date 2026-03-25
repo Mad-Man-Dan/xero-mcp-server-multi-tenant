@@ -17,11 +17,13 @@ async function fetchProfitAndLoss(
   timeframe?: TimeframeType,
   standardLayout?: boolean,
   paymentsOnly?: boolean,
+  tenantId?: string,
 ): Promise<ReportWithRow | null> {
   await xeroClient.authenticate();
+  const resolvedTenantId = xeroClient.resolveTenantId(tenantId);
 
   const response = await xeroClient.accountingApi.getReportProfitAndLoss(
-    xeroClient.tenantId,
+    resolvedTenantId,
     fromDate,
     toDate,
     periods,
@@ -58,6 +60,7 @@ export async function listXeroProfitAndLoss(
   timeframe?: TimeframeType,
   standardLayout?: boolean,
   paymentsOnly?: boolean,
+  tenantId?: string,
 ): Promise<XeroClientResponse<ReportWithRow>> {
   try {
     const profitAndLoss = await fetchProfitAndLoss(
@@ -65,7 +68,9 @@ export async function listXeroProfitAndLoss(
       toDate,
       periods,
       timeframe,
+      standardLayout,
       paymentsOnly,
+      tenantId,
     );
 
     if (!profitAndLoss) {

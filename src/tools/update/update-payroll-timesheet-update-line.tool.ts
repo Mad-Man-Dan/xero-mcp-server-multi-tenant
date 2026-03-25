@@ -20,9 +20,9 @@ const UpdatePayrollTimesheetLineTool = CreateXeroTool(
       date: z.string().describe("The date for the timesheet line (YYYY-MM-DD)."),
     }).describe("The details of the timesheet line to update."),
   },
-  async (params: { timesheetID: string; timesheetLineID: string; timesheetLine: TimesheetLine }) => {
-    const { timesheetID, timesheetLineID, timesheetLine } = params;
-    const response = await updateXeroPayrollTimesheetUpdateLine(timesheetID, timesheetLineID, timesheetLine);
+  async (params: { timesheetID: string; timesheetLineID: string; timesheetLine: TimesheetLine; tenantId?: string }) => {
+    const { timesheetID, timesheetLineID, timesheetLine, tenantId } = params;
+    const response = await updateXeroPayrollTimesheetUpdateLine(timesheetID, timesheetLineID, timesheetLine, tenantId);
 
     if (response.isError) {
       return {

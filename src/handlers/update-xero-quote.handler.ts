@@ -12,12 +12,13 @@ interface QuoteLineItem {
   taxType: string;
 }
 
-async function getQuote(quoteId: string): Promise<Quote | undefined> {
+async function getQuote(quoteId: string, tenantId?: string): Promise<Quote | undefined> {
   await xeroClient.authenticate();
+  const resolvedTenantId = xeroClient.resolveTenantId(tenantId);
 
   // First, get the current quote to check its status
   const response = await xeroClient.accountingApi.getQuote(
-    xeroClient.tenantId, // tenantId
+    resolvedTenantId, // tenantId
     quoteId, // quoteId
     getClientHeaders(), // options
   );
@@ -36,8 +37,11 @@ async function updateQuote(
   contactId?: string,
   date?: string,
   expiryDate?: string,
-  existingQuote?: Quote
+  existingQuote?: Quote,
+  tenantId?: string
 ): Promise<Quote | undefined> {
+  await xeroClient.authenticate();
+  const resolvedTenantId = xeroClient.resolveTenantId(tenantId);
   // Create quote object with only the fields that are being updated
   const quote: Quote = {
     lineItems: lineItems,
@@ -64,7 +68,7 @@ async function updateQuote(
   }
 
   const response = await xeroClient.accountingApi.updateQuote(
-    xeroClient.tenantId,
+    resolvedTenantId,
     quoteId, // quoteId
     {
       quotes: [quote],
@@ -90,9 +94,10 @@ export async function updateXeroQuote(
   contactId?: string,
   date?: string,
   expiryDate?: string,
+  tenantId?: string,
 ): Promise<XeroClientResponse<Quote>> {
   try {
-    const existingQuote = await getQuote(quoteId);
+    const existingQuote = await getQuote(quoteId, tenantId);
 
     const quoteStatus = existingQuote?.status;
 
@@ -116,7 +121,8 @@ export async function updateXeroQuote(
       contactId,
       date,
       expiryDate,
-      existingQuote
+      existingQuote,
+      tenantId
     );
 
     if (!updatedQuote) {

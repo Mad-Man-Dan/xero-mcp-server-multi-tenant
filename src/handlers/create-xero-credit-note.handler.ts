@@ -16,8 +16,10 @@ async function createCreditNote(
   contactId: string,
   lineItems: CreditNoteLineItem[],
   reference: string | undefined,
+  tenantId?: string,
 ): Promise<CreditNote | undefined> {
   await xeroClient.authenticate();
+  const resolvedTenantId = xeroClient.resolveTenantId(tenantId);
 
   const creditNote: CreditNote = {
     type: CreditNote.TypeEnum.ACCRECCREDIT,
@@ -31,7 +33,7 @@ async function createCreditNote(
   };
 
   const response = await xeroClient.accountingApi.createCreditNotes(
-    xeroClient.tenantId,
+    resolvedTenantId,
     {
       creditNotes: [creditNote],
     }, // creditNotes
@@ -51,12 +53,14 @@ export async function createXeroCreditNote(
   contactId: string,
   lineItems: CreditNoteLineItem[],
   reference?: string,
+  tenantId?: string,
 ): Promise<XeroClientResponse<CreditNote>> {
   try {
     const createdCreditNote = await createCreditNote(
       contactId,
       lineItems,
       reference,
+      tenantId,
     );
 
     if (!createdCreditNote) {

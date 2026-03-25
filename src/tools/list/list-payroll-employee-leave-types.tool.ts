@@ -11,8 +11,8 @@ const ListPayrollEmployeeLeaveTypesTool = CreateXeroTool(
       .string()
       .describe("The Xero employee ID to fetch leave types for"),
   },
-  async ({ employeeId }) => {
-    const response = await listXeroPayrollEmployeeLeaveTypes(employeeId);
+  async ({ employeeId, tenantId }) => {
+    const response = await listXeroPayrollEmployeeLeaveTypes(employeeId, tenantId);
     if (response.isError) {
       return {
         content: [

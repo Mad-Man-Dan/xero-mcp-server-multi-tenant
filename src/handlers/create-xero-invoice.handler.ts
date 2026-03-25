@@ -20,8 +20,10 @@ async function createInvoice(
   type: Invoice.TypeEnum,
   reference: string | undefined,
   date: string | undefined,
+  tenantId?: string,
 ): Promise<Invoice | undefined> {
   await xeroClient.authenticate();
+  const resolvedTenantId = xeroClient.resolveTenantId(tenantId);
 
   const invoice: Invoice = {
     type: type,
@@ -40,7 +42,7 @@ async function createInvoice(
   };
 
   const response = await xeroClient.accountingApi.createInvoices(
-    xeroClient.tenantId,
+    resolvedTenantId,
     {
       invoices: [invoice],
     }, // invoices
@@ -62,6 +64,7 @@ export async function createXeroInvoice(
   type: Invoice.TypeEnum = Invoice.TypeEnum.ACCREC,
   reference?: string,
   date?: string,
+  tenantId?: string,
 ): Promise<XeroClientResponse<Invoice>> {
   try {
     const createdInvoice = await createInvoice(
@@ -70,6 +73,7 @@ export async function createXeroInvoice(
       type,
       reference,
       date,
+      tenantId,
     );
 
     if (!createdInvoice) {

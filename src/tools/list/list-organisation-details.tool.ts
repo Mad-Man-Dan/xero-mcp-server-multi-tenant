@@ -6,8 +6,8 @@ const ListOrganisationDetailsTool = CreateXeroTool(
   "list-organisation-details",
   "Lists the organisation details from Xero. Use this tool to get information about the current Xero organisation.",
   {},
-  async () => {
-    const response = await listXeroOrganisationDetails();
+  async ({ tenantId }) => {
+    const response = await listXeroOrganisationDetails(tenantId);
     if (response.error !== null) {
       return {
         content: [

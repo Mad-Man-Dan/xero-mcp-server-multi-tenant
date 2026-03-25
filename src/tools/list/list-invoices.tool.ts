@@ -20,8 +20,8 @@ const ListInvoicesTool = CreateXeroTool(
       .optional()
       .describe("If provided, invoice line items will also be returned"),
   },
-  async ({ page, contactIds, invoiceNumbers }) => {
-    const response = await listXeroInvoices(page, contactIds, invoiceNumbers);
+  async ({ page, contactIds, invoiceNumbers, tenantId }) => {
+    const response = await listXeroInvoices(page, contactIds, invoiceNumbers, tenantId);
     if (response.error !== null) {
       return {
         content: [

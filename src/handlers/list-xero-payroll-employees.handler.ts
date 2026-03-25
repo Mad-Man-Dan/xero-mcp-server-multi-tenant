@@ -4,12 +4,13 @@ import { formatError } from "../helpers/format-error.js";
 import { getClientHeaders } from "../helpers/get-client-headers.js";
 import { Employee } from "xero-node/dist/gen/model/payroll-nz/employee.js";
 
-async function getPayrollEmployees(): Promise<Employee[]> {
+async function getPayrollEmployees(tenantId?: string): Promise<Employee[]> {
   await xeroClient.authenticate();
+  const resolvedTenantId = xeroClient.resolveTenantId(tenantId);
 
   // Call the Employees endpoint from the PayrollNZApi
   const employees = await xeroClient.payrollNZApi.getEmployees(
-    xeroClient.tenantId,
+    resolvedTenantId,
     undefined, // page
     undefined, // pageSize
     getClientHeaders(),
@@ -21,11 +22,11 @@ async function getPayrollEmployees(): Promise<Employee[]> {
 /**
  * List all payroll employees from Xero
  */
-export async function listXeroPayrollEmployees(): Promise<
+export async function listXeroPayrollEmployees(tenantId?: string): Promise<
   XeroClientResponse<Employee[]>
 > {
   try {
-    const employees = await getPayrollEmployees();
+    const employees = await getPayrollEmployees(tenantId);
 
     return {
       result: employees,

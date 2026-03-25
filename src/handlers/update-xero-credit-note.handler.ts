@@ -12,12 +12,13 @@ interface CreditNoteLineItem {
   taxType: string;
 }
 
-async function getCreditNote(creditNoteId: string): Promise<CreditNote | null> {
+async function getCreditNote(creditNoteId: string, tenantId?: string): Promise<CreditNote | null> {
   await xeroClient.authenticate();
+  const resolvedTenantId = xeroClient.resolveTenantId(tenantId);
 
   // First, get the current credit note to check its status
   const response = await xeroClient.accountingApi.getCreditNote(
-    xeroClient.tenantId,
+    resolvedTenantId,
     creditNoteId, // creditNoteId
     undefined, // unitdp
     getClientHeaders(), // options
@@ -32,7 +33,11 @@ async function updateCreditNote(
   reference?: string,
   contactId?: string,
   date?: string,
+  tenantId?: string,
 ): Promise<CreditNote | null> {
+  await xeroClient.authenticate();
+  const resolvedTenantId = xeroClient.resolveTenantId(tenantId);
+
   const creditNote: CreditNote = {
     lineItems: lineItems,
     reference: reference,
@@ -41,7 +46,7 @@ async function updateCreditNote(
   };
 
   const response = await xeroClient.accountingApi.updateCreditNote(
-    xeroClient.tenantId,
+    resolvedTenantId,
     creditNoteId, // creditNoteId
     {
       creditNotes: [creditNote],
@@ -63,9 +68,10 @@ export async function updateXeroCreditNote(
   reference?: string,
   contactId?: string,
   date?: string,
+  tenantId?: string,
 ): Promise<XeroClientResponse<CreditNote>> {
   try {
-    const existingCreditNote = await getCreditNote(creditNoteId);
+    const existingCreditNote = await getCreditNote(creditNoteId, tenantId);
 
     const creditNoteStatus = existingCreditNote?.status;
 
@@ -84,6 +90,7 @@ export async function updateXeroCreditNote(
       reference,
       contactId,
       date,
+      tenantId,
     );
 
     if (!updatedCreditNote) {

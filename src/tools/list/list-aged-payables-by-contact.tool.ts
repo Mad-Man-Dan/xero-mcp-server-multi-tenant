@@ -16,8 +16,8 @@ const ListAgedPayablesByContact = CreateXeroTool(
     invoicesToDate: z.string().optional()
       .describe("Optional to date in YYYY-MM-DD format. If provided, will only show payable invoices before this date for the contact."),
   },
-  async ({ contactId, reportDate, invoicesFromDate, invoicesToDate }) => {
-    const response = await listXeroAgedPayablesByContact(contactId, reportDate, invoicesFromDate, invoicesToDate);
+  async ({ contactId, reportDate, invoicesFromDate, invoicesToDate, tenantId }) => {
+    const response = await listXeroAgedPayablesByContact(contactId, reportDate, invoicesFromDate, invoicesToDate, tenantId);
     
     if (response.isError) {
       return {

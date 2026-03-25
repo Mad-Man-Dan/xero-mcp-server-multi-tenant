@@ -4,11 +4,12 @@ import { formatError } from "../helpers/format-error.js";
 import { Account } from "xero-node";
 import { getClientHeaders } from "../helpers/get-client-headers.js";
 
-async function listAccounts(): Promise<Account[]> {
+async function listAccounts(tenantId?: string): Promise<Account[]> {
   await xeroClient.authenticate();
+  const resolvedTenantId = xeroClient.resolveTenantId(tenantId);
 
   const response = await xeroClient.accountingApi.getAccounts(
-    xeroClient.tenantId,
+    resolvedTenantId,
     undefined, // ifModifiedSince
     undefined, // where
     undefined, // order
@@ -22,11 +23,11 @@ async function listAccounts(): Promise<Account[]> {
 /**
  * List all accounts from Xero
  */
-export async function listXeroAccounts(): Promise<
+export async function listXeroAccounts(tenantId?: string): Promise<
   XeroClientResponse<Account[]>
 > {
   try {
-    const accounts = await listAccounts();
+    const accounts = await listAccounts(tenantId);
 
     return {
       result: accounts,

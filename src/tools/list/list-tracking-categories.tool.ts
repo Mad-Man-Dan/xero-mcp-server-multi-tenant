@@ -10,8 +10,8 @@ const ListTrackingCategoriesTool = CreateXeroTool(
     includeArchived: z.boolean().optional()
       .describe("Determines whether or not archived categories will be returned. By default, no archived categories will be returned.")
   },
-  async ({ includeArchived }) => {
-    const response = await listXeroTrackingCategories(includeArchived);
+  async ({ includeArchived, tenantId }) => {
+    const response = await listXeroTrackingCategories(includeArchived, tenantId);
 
     if (response.isError) {
       return {

@@ -8,8 +8,8 @@ const ListItemsTool = CreateXeroTool(
   {
     page: z.number(),
   },
-  async ({ page }) => {
-    const response = await listXeroItems(page);
+  async ({ page, tenantId }) => {
+    const response = await listXeroItems(page, tenantId);
 
     if (response.isError) {
       return {

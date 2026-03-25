@@ -16,15 +16,16 @@ async function fetchLeavePeriods({
   employeeId,
   startDate,
   endDate,
-}: FetchLeavePeriodParams): Promise<LeavePeriod[] | null> {
+}: FetchLeavePeriodParams, tenantId?: string): Promise<LeavePeriod[] | null> {
   await xeroClient.authenticate();
+  const resolvedTenantId = xeroClient.resolveTenantId(tenantId);
 
   if (!employeeId) {
     throw new Error("Employee ID is required to fetch leave periods");
   }  // After reviewing the SDK documentation, it appears this API call requires different parameters
   // Use parameters that match the SDK's expectations
   const response = await xeroClient.payrollNZApi.getEmployeeLeavePeriods(
-    xeroClient.tenantId,
+    resolvedTenantId,
     employeeId,
     startDate,
     endDate,
@@ -43,9 +44,10 @@ export async function listXeroPayrollLeavePeriods(
   employeeId: string,
   startDate?: string,
   endDate?: string,
+  tenantId?: string,
 ): Promise<XeroClientResponse<LeavePeriod[]>> {
   try {
-    const periods = await fetchLeavePeriods({ employeeId, startDate, endDate });
+    const periods = await fetchLeavePeriods({ employeeId, startDate, endDate }, tenantId);
 
     if (!periods) {
       return {

@@ -20,8 +20,10 @@ async function createQuote(
   lineItems: QuoteLineItem[],
   title: string | undefined,
   summary: string | undefined,
+  tenantId?: string,
 ): Promise<Quote | undefined> {
   await xeroClient.authenticate();
+  const resolvedTenantId = xeroClient.resolveTenantId(tenantId);
 
   const quote: Quote = {
     quoteNumber: quoteNumber,
@@ -41,7 +43,7 @@ async function createQuote(
   };
 
   const response = await xeroClient.accountingApi.createQuotes(
-    xeroClient.tenantId,
+    resolvedTenantId,
     {
       quotes: [quote],
     }, // quotes
@@ -64,6 +66,7 @@ export async function createXeroQuote(
   terms?: string,
   title?: string,
   summary?: string,
+  tenantId?: string,
 ): Promise<XeroClientResponse<Quote>> {
   try {
     const createdQuote = await createQuote(
@@ -74,6 +77,7 @@ export async function createXeroQuote(
       lineItems,
       title,
       summary,
+      tenantId,
     );
 
     if (!createdQuote) {

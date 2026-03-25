@@ -18,8 +18,9 @@ async function createPayment({
   amount,
   date,
   reference,
-}: PaymentProps): Promise<Payment | undefined> {
+}: PaymentProps, tenantId?: string): Promise<Payment | undefined> {
   await xeroClient.authenticate();
+  const resolvedTenantId = xeroClient.resolveTenantId(tenantId);
 
   const payment: Payment = {
     invoice: {
@@ -34,7 +35,7 @@ async function createPayment({
   };
 
   const response = await xeroClient.accountingApi.createPayment(
-    xeroClient.tenantId,
+    resolvedTenantId,
     payment,
     undefined, // idempotencyKey
     getClientHeaders(), // options
@@ -52,7 +53,7 @@ export async function createXeroPayment({
   amount,
   date,
   reference,
-}: PaymentProps): Promise<XeroClientResponse<Payment>> {
+}: PaymentProps, tenantId?: string): Promise<XeroClientResponse<Payment>> {
   try {
     const createdPayment = await createPayment({
       invoiceId,
@@ -60,7 +61,7 @@ export async function createXeroPayment({
       amount,
       date,
       reference,
-    });
+    }, tenantId);
 
     if (!createdPayment) {
       throw new Error("Payment creation failed.");

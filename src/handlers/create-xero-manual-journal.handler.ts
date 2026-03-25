@@ -17,8 +17,10 @@ async function createManualJournal(
   status?: ManualJournal.StatusEnum,
   url?: string,
   showOnCashBasisReports?: boolean,
+  tenantId?: string,
 ): Promise<ManualJournal | undefined> {
   await xeroClient.authenticate();
+  const resolvedTenantId = xeroClient.resolveTenantId(tenantId);
 
   const manualJournal: ManualJournal = {
     narration,
@@ -41,7 +43,7 @@ async function createManualJournal(
   };
 
   const response = await xeroClient.accountingApi.createManualJournals(
-    xeroClient.tenantId,
+    resolvedTenantId,
     manualJournals,
     true,
     undefined,
@@ -70,6 +72,7 @@ export async function createXeroManualJournal(
   status?: ManualJournal.StatusEnum,
   url?: string,
   showOnCashBasisReports?: boolean,
+  tenantId?: string,
 ): Promise<XeroClientResponse<ManualJournal>> {
   try {
     const createdManualJournal = await createManualJournal(
@@ -80,6 +83,7 @@ export async function createXeroManualJournal(
       status,
       url,
       showOnCashBasisReports,
+      tenantId,
     );
 
     if (!createdManualJournal) {

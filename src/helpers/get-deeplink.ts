@@ -26,8 +26,12 @@ export enum DeepLinkType {
  * @param itemId
  * @returns
  */
-export const getDeepLink = async (type: DeepLinkType, itemId: string) => {
-  const orgShortCode = await xeroClient.getShortCode();
+export const getDeepLink = async (
+  type: DeepLinkType,
+  itemId: string,
+  tenantId?: string,
+) => {
+  const orgShortCode = await xeroClient.getShortCode(tenantId);
 
   if (!orgShortCode) {
     throw new Error("Failed to retrieve organisation short code");

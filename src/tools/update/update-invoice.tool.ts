@@ -53,6 +53,7 @@ const UpdateInvoiceTool = CreateXeroTool(
       dueDate,
       date,
       contactId,
+      tenantId,
     }: {
       invoiceId: string;
       lineItems?: Array<{
@@ -66,6 +67,7 @@ const UpdateInvoiceTool = CreateXeroTool(
       dueDate?: string;
       date?: string;
       contactId?: string;
+      tenantId?: string;
     },
     //_extra: { signal: AbortSignal },
   ) => {
@@ -76,6 +78,7 @@ const UpdateInvoiceTool = CreateXeroTool(
       dueDate,
       date,
       contactId,
+      tenantId,
     );
     if (result.isError) {
       return {

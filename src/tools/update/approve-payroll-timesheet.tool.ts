@@ -11,9 +11,9 @@ const ApprovePayrollTimesheetTool = CreateXeroTool(
   {
     timesheetID: z.string().describe("The ID of the timesheet to approve."),
   },
-  async (params: { timesheetID: string }) => {
-    const { timesheetID } = params;
-    const response = await approveXeroPayrollTimesheet(timesheetID);
+  async (params: { timesheetID: string; tenantId?: string }) => {
+    const { timesheetID, tenantId } = params;
+    const response = await approveXeroPayrollTimesheet(timesheetID, tenantId);
 
     if (response.isError) {
       return {

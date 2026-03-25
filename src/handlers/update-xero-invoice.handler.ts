@@ -14,12 +14,13 @@ interface InvoiceLineItem {
   tracking?: LineItemTracking[];
 }
 
-async function getInvoice(invoiceId: string): Promise<Invoice | undefined> {
+async function getInvoice(invoiceId: string, tenantId?: string): Promise<Invoice | undefined> {
   await xeroClient.authenticate();
+  const resolvedTenantId = xeroClient.resolveTenantId(tenantId);
 
   // First, get the current invoice to check its status
   const response = await xeroClient.accountingApi.getInvoice(
-    xeroClient.tenantId,
+    resolvedTenantId,
     invoiceId, // invoiceId
     undefined, // unitdp
     getClientHeaders(), // options
@@ -35,7 +36,11 @@ async function updateInvoice(
   dueDate?: string,
   date?: string,
   contactId?: string,
+  tenantId?: string,
 ): Promise<Invoice | undefined> {
+  await xeroClient.authenticate();
+  const resolvedTenantId = xeroClient.resolveTenantId(tenantId);
+
   const invoice: Invoice = {
     lineItems: lineItems,
     reference: reference,
@@ -45,7 +50,7 @@ async function updateInvoice(
   };
 
   const response = await xeroClient.accountingApi.updateInvoice(
-    xeroClient.tenantId,
+    resolvedTenantId,
     invoiceId, // invoiceId
     {
       invoices: [invoice],
@@ -68,9 +73,10 @@ export async function updateXeroInvoice(
   dueDate?: string,
   date?: string,
   contactId?: string,
+  tenantId?: string,
 ): Promise<XeroClientResponse<Invoice>> {
   try {
-    const existingInvoice = await getInvoice(invoiceId);
+    const existingInvoice = await getInvoice(invoiceId, tenantId);
 
     const invoiceStatus = existingInvoice?.status;
 
@@ -90,6 +96,7 @@ export async function updateXeroInvoice(
       dueDate,
       date,
       contactId,
+      tenantId,
     );
 
     if (!updatedInvoice) {

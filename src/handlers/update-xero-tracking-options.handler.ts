@@ -12,11 +12,12 @@ interface TrackingOptionItem {
   status?: TrackingOptionStatus
 }
 
-async function getTrackingOptions(trackingCategoryId: string): Promise<TrackingOption[] | undefined> {
+async function getTrackingOptions(trackingCategoryId: string, tenantId?: string): Promise<TrackingOption[] | undefined> {
   await xeroClient.authenticate();
+  const resolvedTenantId = xeroClient.resolveTenantId(tenantId);
 
   const response = await xeroClient.accountingApi.getTrackingCategory(
-    xeroClient.tenantId,
+    resolvedTenantId,
     trackingCategoryId,
     getClientHeaders()
   );
@@ -29,8 +30,12 @@ async function updateTrackingOption(
   trackingOptionId: string,
   existingTrackingOption: TrackingOption,
   name?: string,
-  status?: TrackingOptionStatus
+  status?: TrackingOptionStatus,
+  tenantId?: string
 ): Promise<TrackingOption | undefined> {
+  await xeroClient.authenticate();
+  const resolvedTenantId = xeroClient.resolveTenantId(tenantId);
+
   const trackingOption: TrackingOption = {
     trackingOptionID: trackingOptionId,
     name: name ? name : existingTrackingOption.name,
@@ -38,7 +43,7 @@ async function updateTrackingOption(
   };
 
   await xeroClient.accountingApi.updateTrackingOptions(
-    xeroClient.tenantId,
+    resolvedTenantId,
     trackingCategoryId,
     trackingOptionId,
     trackingOption,
@@ -51,11 +56,12 @@ async function updateTrackingOption(
 
 export async function updateXeroTrackingOption(
   trackingCategoryId: string,
-  options: TrackingOptionItem[]
+  options: TrackingOptionItem[],
+  tenantId?: string
 ): Promise<XeroClientResponse<TrackingOption[]>> {
   try {
 
-    const existingTrackingOptions = await getTrackingOptions(trackingCategoryId);
+    const existingTrackingOptions = await getTrackingOptions(trackingCategoryId, tenantId);
 
     if (!existingTrackingOptions) {
       throw new Error("Could not find tracking options.");
@@ -66,7 +72,7 @@ export async function updateXeroTrackingOption(
         .find(existingOption => existingOption.trackingOptionID === option.trackingOptionId);
 
       return existingTrackingOption
-        ? await updateTrackingOption(trackingCategoryId, option.trackingOptionId, existingTrackingOption, option.name, option.status)
+        ? await updateTrackingOption(trackingCategoryId, option.trackingOptionId, existingTrackingOption, option.name, option.status, tenantId)
         : undefined;
     }));
 

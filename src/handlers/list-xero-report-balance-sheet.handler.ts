@@ -7,7 +7,7 @@ import { XeroClientResponse } from "../types/tool-response.js";
 import { ListReportBalanceSheetParams } from "../types/list-report-balance-sheet-params.js";
 
 
-async function getReportBalanceSheet(params: ListReportBalanceSheetParams): Promise<ReportWithRow | null> {
+async function getReportBalanceSheet(params: ListReportBalanceSheetParams, tenantId?: string): Promise<ReportWithRow | null> {
     const {
         date,
         periods,
@@ -19,9 +19,10 @@ async function getReportBalanceSheet(params: ListReportBalanceSheetParams): Prom
     } = params;
 
     await xeroClient.authenticate();
+    const resolvedTenantId = xeroClient.resolveTenantId(tenantId);
 
     const response = await xeroClient.accountingApi.getReportBalanceSheet(
-        xeroClient.tenantId,
+        resolvedTenantId,
         date || undefined,
         periods || undefined,
         timeframe || undefined,
@@ -34,9 +35,9 @@ async function getReportBalanceSheet(params: ListReportBalanceSheetParams): Prom
     return response.body.reports?.[0] ?? null;
 }
 
-export async function listXeroReportBalanceSheet(params: ListReportBalanceSheetParams): Promise<XeroClientResponse<ReportWithRow>> {
+export async function listXeroReportBalanceSheet(params: ListReportBalanceSheetParams, tenantId?: string): Promise<XeroClientResponse<ReportWithRow>> {
     try {
-        const balanceSheet = await getReportBalanceSheet(params);
+        const balanceSheet = await getReportBalanceSheet(params, tenantId);
 
         if (!balanceSheet) {
             return {

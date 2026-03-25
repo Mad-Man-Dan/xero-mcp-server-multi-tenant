@@ -17,8 +17,10 @@ async function getPayments(
     paymentId?: string;
     reference?: string;
   },
+  tenantId?: string,
 ): Promise<Payment[]> {
   await xeroClient.authenticate();
+  const resolvedTenantId = xeroClient.resolveTenantId(tenantId);
 
   // Build where clause for filtering
   const whereConditions: string[] = [];
@@ -41,7 +43,7 @@ async function getPayments(
     whereConditions.length > 0 ? whereConditions.join(" AND ") : undefined;
 
   const response = await xeroClient.accountingApi.getPayments(
-    xeroClient.tenantId,
+    resolvedTenantId,
     undefined, // ifModifiedSince
     where,
     "UpdatedDateUTC DESC", // order
@@ -69,6 +71,7 @@ export async function listXeroPayments(
     paymentId?: string;
     reference?: string;
   },
+  tenantId?: string,
 ): Promise<XeroClientResponse<Payment[]>> {
   try {
     const payments = await getPayments(page, {
@@ -76,7 +79,7 @@ export async function listXeroPayments(
       invoiceId,
       paymentId,
       reference,
-    });
+    }, tenantId);
 
     return {
       result: payments,

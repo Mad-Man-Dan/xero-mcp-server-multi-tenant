@@ -53,13 +53,13 @@ const ListPaymentsTool = CreateXeroTool(
     paymentId: z.string().optional(),
     reference: z.string().optional(),
   },
-  async ({ page, invoiceNumber, invoiceId, paymentId, reference }) => {
+  async ({ page, invoiceNumber, invoiceId, paymentId, reference, tenantId }) => {
     const response = await listXeroPayments(page, {
       invoiceNumber,
       invoiceId,
       paymentId,
       reference,
-    });
+    }, tenantId);
 
     if (response.error !== null) {
       return {

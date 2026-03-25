@@ -8,11 +8,13 @@ async function getQuotes(
   contactId: string | undefined,
   page: number,
   quoteNumber: string | undefined,
+  tenantId?: string,
 ): Promise<Quote[]> {
   await xeroClient.authenticate();
+  const resolvedTenantId = xeroClient.resolveTenantId(tenantId);
 
   const quotes = await xeroClient.accountingApi.getQuotes(
-    xeroClient.tenantId,
+    resolvedTenantId,
     undefined, // ifModifiedSince
     undefined, // dateFrom
     undefined, // dateTo
@@ -35,9 +37,10 @@ export async function listXeroQuotes(
   page: number = 1,
   contactId?: string,
   quoteNumber?: string,
+  tenantId?: string,
 ): Promise<XeroClientResponse<Quote[]>> {
   try {
-    const quotes = await getQuotes(contactId, page, quoteNumber);
+    const quotes = await getQuotes(contactId, page, quoteNumber, tenantId);
 
     return {
       result: quotes,

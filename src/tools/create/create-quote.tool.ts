@@ -34,6 +34,7 @@ const CreateQuoteTool = CreateXeroTool(
     terms,
     title,
     summary,
+    tenantId,
   }) => {
     const result = await createXeroQuote(
       contactId,
@@ -43,6 +44,7 @@ const CreateQuoteTool = CreateXeroTool(
       terms,
       title,
       summary,
+      tenantId,
     );
     if (result.isError) {
       return {

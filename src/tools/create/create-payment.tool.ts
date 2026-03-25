@@ -32,14 +32,14 @@ const CreatePaymentTool = CreateXeroTool(
       .optional()
       .describe("Optional payment reference/description"),
   },
-  async ({ invoiceId, accountId, amount, date, reference }) => {
+  async ({ invoiceId, accountId, amount, date, reference, tenantId }) => {
     const result = await createXeroPayment({
       invoiceId,
       accountId,
       amount,
       date,
       reference,
-    });
+    }, tenantId);
     if (result.isError) {
       return {
         content: [

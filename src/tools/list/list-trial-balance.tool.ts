@@ -10,7 +10,7 @@ const ListTrialBalanceTool = CreateXeroTool(
     paymentsOnly: z.boolean().optional().describe("Optional flag to include only accounts with payments"),
   },
   async (args) => {
-    const response = await listXeroTrialBalance(args?.date, args?.paymentsOnly);
+    const response = await listXeroTrialBalance(args?.date, args?.paymentsOnly, args?.tenantId);
     if (response.error !== null) {
       return {
         content: [

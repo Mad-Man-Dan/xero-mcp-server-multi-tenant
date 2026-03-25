@@ -11,8 +11,8 @@ const ListPayrollLeavePeriodsToolTool = CreateXeroTool(
     startDate: z.string().optional().describe("Optional start date in YYYY-MM-DD format"),
     endDate: z.string().optional().describe("Optional end date in YYYY-MM-DD format"),
   },
-  async ({ employeeId, startDate, endDate }) => {
-    const response = await listXeroPayrollLeavePeriods(employeeId, startDate, endDate);
+  async ({ employeeId, startDate, endDate, tenantId }) => {
+    const response = await listXeroPayrollLeavePeriods(employeeId, startDate, endDate, tenantId);
     if (response.isError) {
       return {
         content: [

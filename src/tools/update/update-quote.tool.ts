@@ -46,6 +46,7 @@ const UpdateQuoteTool = CreateXeroTool(
       contactId,
       date,
       expiryDate,
+      tenantId,
     }
   ) => {
     const result = await updateXeroQuote(
@@ -59,6 +60,7 @@ const UpdateQuoteTool = CreateXeroTool(
       contactId,
       date,
       expiryDate,
+      tenantId,
     );
     if (result.isError) {
       return {
