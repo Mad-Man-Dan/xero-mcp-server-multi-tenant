@@ -8,7 +8,10 @@ This is a fork of [XeroAPI/xero-mcp-server](https://github.com/XeroAPI/xero-mcp-
 - **Authorization Code flow with PKCE** — connect to multiple orgs via OAuth2 (Custom Connections are limited to a single org)
 - **Persistent token storage** — OAuth tokens are cached locally and refresh automatically, so you only authorize in the browser once
 - **Per-call tenant override** — every tool accepts an optional `tenantId` parameter to target a specific org without switching globally
-- **New tools:** `list-xero-tenants` and `switch-xero-tenant`
+- **Granular OAuth scopes** — migrated from deprecated umbrella scopes (`accounting.transactions`, `accounting.reports.read`) to Xero's new granular scopes
+- **Accounts (Chart of Accounts) CRUD** — get, create, update, and delete accounts
+- **Generic attachment tools** — list, download, and upload attachments across all entity types (invoices, contacts, manual journals, etc.)
+- **New tools:** `list-xero-tenants`, `switch-xero-tenant`, `get-account`, `create-account`, `update-account`, `delete-account`, `list-attachments`, `get-attachment`, `upload-attachment`
 
 ## Prerequisites
 
