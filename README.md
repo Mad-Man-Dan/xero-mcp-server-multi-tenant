@@ -135,16 +135,38 @@ NOTE: `XERO_CLIENT_BEARER_TOKEN` takes precedence over other auth modes if set.
 
 ### Required Scopes
 
-When configuring your Xero app, request the following scopes:
+This fork uses the **new granular scopes** (not the deprecated `accounting.transactions` / `accounting.reports.read` umbrella scopes). When configuring your Xero app, request the following:
 
 ```
 openid profile email offline_access
-accounting.transactions accounting.contacts accounting.settings
-accounting.reports.read
-payroll.settings payroll.employees payroll.timesheets
+
+# Accounting - Transactions (granular)
+accounting.invoices
+accounting.invoices.read
+accounting.payments
+accounting.payments.read
+accounting.banktransactions
+accounting.banktransactions.read
+accounting.manualjournals
+accounting.manualjournals.read
+
+# Accounting - Other
+accounting.contacts
+accounting.settings
+
+# Accounting - Reports (granular)
+accounting.reports.aged.read
+accounting.reports.balancesheet.read
+accounting.reports.profitandloss.read
+accounting.reports.trialbalance.read
+
+# Payroll
+payroll.settings
+payroll.employees
+payroll.timesheets
 ```
 
-> **Note:** Some scopes are being deprecated in favour of more granular scopes. See the [Xero OAuth 2.0 Scopes documentation](https://developer.xero.com/documentation/guides/oauth2/scopes/) for details.
+> See the [Xero OAuth 2.0 Scopes documentation](https://developer.xero.com/documentation/guides/oauth2/scopes/) for the full list and deprecation timeline.
 
 ## Multi-Tenant Usage
 
@@ -187,8 +209,19 @@ Every tool accepts an optional `tenantId` parameter. This lets you query a speci
 - `list-xero-tenants`: List all connected Xero organisations
 - `switch-xero-tenant`: Switch the active organisation
 
-### Read Operations
+### Accounts (Chart of Accounts)
 - `list-accounts`: Retrieve chart of accounts
+- `get-account`: Retrieve a single account by ID
+- `create-account`: Create a new account (code, name, type, tax type, etc.)
+- `update-account`: Update an account or archive it
+- `delete-account`: Delete an account (only if no transactions exist)
+
+### Attachments (Generic — works across all entity types)
+- `list-attachments`: List attachments on any entity (invoice, contact, manual journal, etc.)
+- `get-attachment`: Download an attachment as base64 content
+- `upload-attachment`: Upload a file to any entity (from base64 or local file path)
+
+### Read Operations
 - `list-contacts`: Retrieve contacts (customers and suppliers)
 - `list-contact-groups`: Retrieve contact groups
 - `list-credit-notes`: Retrieve credit notes
