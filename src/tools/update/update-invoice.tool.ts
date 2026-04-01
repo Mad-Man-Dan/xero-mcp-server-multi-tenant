@@ -27,12 +27,11 @@ const lineItemSchema = z.object({
 
 const UpdateInvoiceTool = CreateXeroTool(
   "update-invoice",
-  "Update an invoice in Xero. Only works on draft invoices.\
-  All line items must be provided. Any line items not provided will be removed. Including existing line items.\
-  Do not modify line items that have not been specified by the user.\
- When an invoice is updated, a deep link to the invoice in Xero is returned. \
- This deep link can be used to view the contact in Xero directly. \
- This link should be displayed to the user.",
+  "Update an invoice in Xero. Field edits (line items, dates, contact) work on DRAFT and SUBMITTED invoices. \
+  Status transitions work on any invoice: DRAFT/SUBMITTED can be moved to AUTHORISED, AUTHORISED can be VOIDED, DRAFT can be DELETED. \
+  All line items must be provided when editing — any not included will be removed. \
+  Do not modify line items that have not been specified by the user. \
+  When an invoice is updated, a deep link to the invoice in Xero is returned and should be displayed to the user.",
   {
     invoiceId: z.string().describe("The ID of the invoice to update."),
     lineItems: z.array(lineItemSchema).optional().describe(
@@ -44,6 +43,9 @@ const UpdateInvoiceTool = CreateXeroTool(
     date: z.string().optional().describe("The date of the invoice."),
     contactId: z.string().optional().describe("The ID of the contact to update the invoice for. \
       Can be obtained from the list-contacts tool."),
+    status: z.enum(["DRAFT", "SUBMITTED", "AUTHORISED", "VOIDED", "DELETED"]).optional().describe(
+      "Transition the invoice to a new status. DRAFT → SUBMITTED → AUTHORISED is the normal flow. AUTHORISED → VOIDED cancels an approved invoice. DRAFT → DELETED removes a draft.",
+    ),
   },
   async (
     {
@@ -53,6 +55,7 @@ const UpdateInvoiceTool = CreateXeroTool(
       dueDate,
       date,
       contactId,
+      status,
       tenantId,
     }: {
       invoiceId: string;
@@ -67,10 +70,14 @@ const UpdateInvoiceTool = CreateXeroTool(
       dueDate?: string;
       date?: string;
       contactId?: string;
+      status?: string;
       tenantId?: string;
     },
-    //_extra: { signal: AbortSignal },
   ) => {
+    const { Invoice: InvoiceModel } = await import("xero-node");
+    const xeroStatus = status
+      ? InvoiceModel.StatusEnum[status as keyof typeof InvoiceModel.StatusEnum]
+      : undefined;
     const result = await updateXeroInvoice(
       invoiceId,
       lineItems,
@@ -78,6 +85,7 @@ const UpdateInvoiceTool = CreateXeroTool(
       dueDate,
       date,
       contactId,
+      xeroStatus,
       tenantId,
     );
     if (result.isError) {

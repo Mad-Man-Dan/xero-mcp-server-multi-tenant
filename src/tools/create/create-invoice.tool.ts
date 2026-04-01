@@ -41,10 +41,15 @@ const CreateInvoiceTool = CreateXeroTool(
       If the type is not specified, the default is ACCREC."),
     reference: z.string().describe("A reference number for the invoice.").optional(),
     date: z.string().describe("The date the invoice was created (YYYY-MM-DD format).").optional(),
+    dueDate: z.string().describe("The due date for the invoice (YYYY-MM-DD format). Defaults to 30 days from today if not provided.").optional(),
+    status: z.enum(["DRAFT", "SUBMITTED", "AUTHORISED"]).describe(
+      "The status to create the invoice with. DRAFT (default) is editable and unsent. SUBMITTED is awaiting approval. AUTHORISED is approved and sent to the contact.",
+    ).optional(),
   },
-  async ({ contactId, lineItems, type, reference, date, tenantId }) => {
+  async ({ contactId, lineItems, type, reference, date, dueDate, status, tenantId }) => {
     const xeroInvoiceType = type === "ACCREC" ? Invoice.TypeEnum.ACCREC : Invoice.TypeEnum.ACCPAY;
-    const result = await createXeroInvoice(contactId, lineItems, xeroInvoiceType, reference, date, tenantId);
+    const xeroStatus = status ? Invoice.StatusEnum[status as keyof typeof Invoice.StatusEnum] : undefined;
+    const result = await createXeroInvoice(contactId, lineItems, xeroInvoiceType, reference, date, dueDate, xeroStatus, tenantId);
     if (result.isError) {
       return {
         content: [

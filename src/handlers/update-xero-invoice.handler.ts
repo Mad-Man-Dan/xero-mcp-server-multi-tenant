@@ -36,6 +36,7 @@ async function updateInvoice(
   dueDate?: string,
   date?: string,
   contactId?: string,
+  status?: Invoice.StatusEnum,
   tenantId?: string,
 ): Promise<Invoice | undefined> {
   await xeroClient.authenticate();
@@ -47,17 +48,18 @@ async function updateInvoice(
     dueDate: dueDate,
     date: date,
     contact: contactId ? { contactID: contactId } : undefined,
+    status: status,
   };
 
   const response = await xeroClient.accountingApi.updateInvoice(
     resolvedTenantId,
-    invoiceId, // invoiceId
+    invoiceId,
     {
       invoices: [invoice],
-    }, // invoices
+    },
     undefined, // unitdp
     undefined, // idempotencyKey
-    getClientHeaders(), // options
+    getClientHeaders(),
   );
 
   return response.body.invoices?.[0];
@@ -73,19 +75,27 @@ export async function updateXeroInvoice(
   dueDate?: string,
   date?: string,
   contactId?: string,
+  status?: Invoice.StatusEnum,
   tenantId?: string,
 ): Promise<XeroClientResponse<Invoice>> {
   try {
     const existingInvoice = await getInvoice(invoiceId, tenantId);
-
     const invoiceStatus = existingInvoice?.status;
 
-    // Only allow updates to DRAFT invoices
-    if (invoiceStatus !== Invoice.StatusEnum.DRAFT) {
+    // Status-only changes (approve, void, delete) are allowed on non-draft invoices
+    const isStatusChangeOnly =
+      status && !lineItems && !reference && !dueDate && !date && !contactId;
+
+    // Field edits are only allowed on DRAFT or SUBMITTED invoices
+    if (
+      !isStatusChangeOnly &&
+      invoiceStatus !== Invoice.StatusEnum.DRAFT &&
+      invoiceStatus !== Invoice.StatusEnum.SUBMITTED
+    ) {
       return {
         result: null,
         isError: true,
-        error: `Cannot update invoice because it is not a draft. Current status: ${invoiceStatus}`,
+        error: `Cannot edit invoice fields because status is ${invoiceStatus}. Only status transitions (e.g. VOIDED) are allowed on authorised invoices.`,
       };
     }
 
@@ -96,6 +106,7 @@ export async function updateXeroInvoice(
       dueDate,
       date,
       contactId,
+      status,
       tenantId,
     );
 

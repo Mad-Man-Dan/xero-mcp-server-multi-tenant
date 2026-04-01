@@ -11,6 +11,7 @@ This is a fork of [XeroAPI/xero-mcp-server](https://github.com/XeroAPI/xero-mcp-
 - **Granular OAuth scopes** — migrated from deprecated umbrella scopes (`accounting.transactions`, `accounting.reports.read`) to Xero's new granular scopes
 - **Accounts (Chart of Accounts) CRUD** — get, create, update, and delete accounts
 - **Generic attachment tools** — list, download, and upload attachments across all entity types (invoices, contacts, manual journals, etc.)
+- **Invoice status control** — create invoices as DRAFT, SUBMITTED, or AUTHORISED; update invoices to transition status (approve, void, delete); custom due dates on create
 - **New tools:** `list-xero-tenants`, `switch-xero-tenant`, `get-account`, `create-account`, `update-account`, `delete-account`, `list-attachments`, `get-attachment`, `upload-attachment`
 
 ## Prerequisites

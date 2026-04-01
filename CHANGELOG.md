@@ -4,6 +4,13 @@ All notable changes to this fork are documented here. This project is a fork of 
 
 ## [Unreleased]
 
+### Changed — Invoice Tools (2026-04-01)
+- **create-invoice**: Added `status` parameter (DRAFT, SUBMITTED, AUTHORISED) — no longer hardcoded to DRAFT
+- **create-invoice**: Added `dueDate` parameter — no longer hardcoded to 30 days from today
+- **update-invoice**: Added `status` parameter (DRAFT, SUBMITTED, AUTHORISED, VOIDED, DELETED) for status transitions
+- **update-invoice**: Now allows field edits on both DRAFT and SUBMITTED invoices (previously DRAFT only)
+- **update-invoice**: Status-only changes (e.g. approve, void) allowed on any invoice regardless of current status
+
 ### Added — Multi-Tenant Support
 - **Authorization Code flow with PKCE** — new `AuthCodeXeroClient` using `openid-client` v6 for PKCE and direct axios token exchange (xero-node's built-in OAuth has incompatibilities with Xero's token endpoint)
 - **Persistent token storage** — OAuth tokens cached at `~/.xero-mcp/tokens.json` with automatic refresh; browser re-auth only needed after 60+ days of inactivity
