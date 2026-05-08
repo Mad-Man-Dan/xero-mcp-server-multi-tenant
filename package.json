@@ -10,7 +10,10 @@
   },
   "author": "Xero (https://xero.com)",
   "type": "module",
-  "bin": "./dist/index.js",
+  "bin": {
+    "xero-mcp-server": "./dist/index.js",
+    "xero-mcp-login": "./dist/login.js"
+  },
   "files": [
     "dist"
   ],
@@ -19,7 +22,8 @@
     "prepare": "npm run build",
     "watch": "tsc --watch",
     "lint:fix": "eslint --fix",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "login": "npm run build && node dist/login.js"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.23.4",
